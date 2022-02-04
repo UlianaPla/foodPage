@@ -98,37 +98,49 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Modal
 
-    const modalForm = document.querySelector('.modal'),
+    const modal = document.querySelector('.modal'),
         btnsShowModal = document.querySelectorAll('[data-modal]'),
         btnHideModal = document.querySelector('[data-close]');
 
     btnsShowModal.forEach(btn => {
-        btn.addEventListener('click', shoModalForm);
+        btn.addEventListener('click', showModal);
     });
 
-    btnHideModal.addEventListener('click', hideModalForm);
+    btnHideModal.addEventListener('click', closeModal);
 
-    function shoModalForm() {
+    function showModal() {
         // 1. Вариант через css классы
-        //modalForm.classList.add('show');
-        //modalForm.classList.remove('hide');
+        modal.classList.add('show');
+        modal.classList.remove('hide');
 
         // 2. Вариант через toggle
-        modalForm.classList.toggle('show');
+        //modal.classList.toggle('show');
 
         // При открытии модального окна нужно блокировать прокрутку базового окна
         document.body.style.overflow = 'hidden';
     }
 
-    function hideModalForm() {
+    function closeModal() {
         // 1. Вариант
-        //modalForm.classList.add('hide');
-        //modalForm.classList.remove('show');
+        modal.classList.add('hide');
+        modal.classList.remove('show');
 
         // 2. Вариант
-        modalForm.classList.toggle('show');
+        //modal.classList.toggle('show');
 
         // При закрытии модального окна нужно восстанавливать прокрутку базового окна
         document.body.style.overflow = '';
     }
+
+    modal.addEventListener('click', (e) => {
+        if(e.target === modal) { // именно modal, не modal__dialog, то закрываем
+            closeModal();
+        }
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if(e.code === "Escape" && modal.classList.contains("show")){ // https://keycode.info/
+            closeModal();
+        }        
+    });
 });
