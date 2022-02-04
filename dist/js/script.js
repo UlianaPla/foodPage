@@ -63,10 +63,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function getZero(num) {
-        if(num >= 0 && num < 10){
+        if (num >= 0 && num < 10) {
             return `0${num}`;
-        }
-        else{
+        } else {
             return num;
         }
     }
@@ -79,7 +78,7 @@ window.addEventListener('DOMContentLoaded', () => {
             seconds = timer.querySelector('#seconds'),
             timeInterval = setInterval(updateClock, 1000);
 
-            updateClock();
+        updateClock();
 
         function updateClock() {
             const t = getTimeRemaining(endtime);
@@ -95,6 +94,41 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     setClock('.timer', deadline);
+
+    // Modal
+
+    const modalForm = document.querySelector('.modal'),
+        btnsShowModal = document.querySelectorAll('[data-modal]'),
+        btnHideModal = document.querySelector('[data-close]');
+
+    btnsShowModal.forEach(btn => {
+        btn.addEventListener('click', shoModalForm);
+    });
+
+    btnHideModal.addEventListener('click', hideModalForm);
+
+    function shoModalForm() {
+        // 1. Вариант через css классы
+        //modalForm.classList.add('show');
+        //modalForm.classList.remove('hide');
+
+        // 2. Вариант через toggle
+        modalForm.classList.toggle('show');
+
+        // При открытии модального окна нужно блокировать прокрутку базового окна
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideModalForm() {
+        // 1. Вариант
+        //modalForm.classList.add('hide');
+        //modalForm.classList.remove('show');
+
+        // 2. Вариант
+        modalForm.classList.toggle('show');
+
+        // При закрытии модального окна нужно восстанавливать прокрутку базового окна
+        document.body.style.overflow = '';
+    }
 });
