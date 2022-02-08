@@ -102,13 +102,7 @@ window.addEventListener('DOMContentLoaded', () => {
         btnsShowModal = document.querySelectorAll('[data-modal]'),
         btnHideModal = document.querySelector('[data-close]');
 
-    btnsShowModal.forEach(btn => {
-        btn.addEventListener('click', showModal);
-    });
-
-    btnHideModal.addEventListener('click', closeModal);
-
-    function showModal() {
+    function openModal() {
         // 1. Вариант через css классы
         modal.classList.add('show');
         modal.classList.remove('hide');
@@ -118,6 +112,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         // При открытии модального окна нужно блокировать прокрутку базового окна
         document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
     }
 
     function closeModal() {
@@ -132,15 +127,31 @@ window.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     }
 
+    btnsShowModal.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    });
+
+    btnHideModal.addEventListener('click', closeModal);
+
     modal.addEventListener('click', (e) => {
-        if(e.target === modal) { // именно modal, не modal__dialog, то закрываем
+        if (e.target === modal) { // именно modal, не modal__dialog, то закрываем
             closeModal();
         }
     });
-    
+
     document.addEventListener('keydown', (e) => {
-        if(e.code === "Escape" && modal.classList.contains("show")){ // https://keycode.info/
+        if (e.code === "Escape" && modal.classList.contains("show")) { // https://keycode.info/
             closeModal();
-        }        
+        }
     });
+
+    const modalTimerId = setTimeout(openModal, 5000);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) { // пользователь долистал до конца
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+    window.addEventListener('scroll', showModalByScroll);
 });
