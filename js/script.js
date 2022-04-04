@@ -202,25 +202,50 @@ window.addEventListener('DOMContentLoaded', () => {
     const getResource = async (url) => {
         const res = await fetch(url);
 
-        if(!res.ok) {
+        if (!res.ok) {
             throw new Error(`Could not fetch ${url}, status: ${res.status}`);
         }
 
         return await res.json();
     };
 
+    // getResource('http://localhost:3000/menu')
+    //     .then(data => {
+    //         // data.forEach(obj => {
+    //         //     new MenuCard(obj.img, obj.altimg, obj.title, obj.descr, obj.price).render();
+    //         // });
+    //         // а это некрасиво, т.к. дублируется код. 
+    //         // Используем деструктуризацию:
+    //         data.forEach(({img, altimg, title, descr, price}) => {
+    //             console.log(title);
+    //             new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+    //         });
+    //     });
+
+    //Если не нужна шаблонизация и карточки будут создаваться нечасто, можно использовать такой подход:
     getResource('http://localhost:3000/menu')
-        .then(data => {
-            // data.forEach(obj => {
-            //     new MenuCard(obj.img, obj.altimg, obj.title, obj.descr, obj.price).render();
-            // });
-            // а это некрасиво, т.к. дублируется код. 
-            // Используем деструктуризацию:
-            data.forEach(({img, altimg, title, descr, price}) => {
-                console.log(title);
-                new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-            });
+        .then(data => createCard(data, '.menu .container'));
+
+    function createCard(data, parent) {
+        data.forEach(({img, altimg, title, descr, price }) => {
+            const element = document.createElement('div');
+            price = price * 27;
+
+            element.classList.add('menu__item');
+            element.innerHTML = `
+                <img src=${img} alt=${altimg}>
+                <h3 class="menu__item-subtitle">${title}</h3>
+                <div class="menu__item-descr">${descr}</div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${price}</span> грн/день</div>
+                </div>  
+            `;
+
+            document.querySelector(parent).append(element);
         });
+    }
 
     // Forms
 
