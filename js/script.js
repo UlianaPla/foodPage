@@ -267,13 +267,9 @@ window.addEventListener('DOMContentLoaded', () => {
             form.insertAdjacentElement('afterend', statusMessage); //Распологаем спиннер не сбоку от инпутов, а ниже.
 
             const formData = new FormData(form);
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            const obj = {};
-            formData.forEach(function (value, key) {
-                obj[key] = value;
-            });
-
-            postData('http://localhost:3000/requests', JSON.stringify(obj))
+            postData('http://localhost:3000/requests', json)
                 .then(data => {
                     console.log(data);
                     showThanksModal(message.success);
