@@ -46,7 +46,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Timer
 
-    const deadline = '2022-04-14';
+    const deadline = '2022-05-20';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -218,11 +218,17 @@ window.addEventListener('DOMContentLoaded', () => {
     //     });
 
     axios.get('http://localhost:3000/menu')
-    .then(data => {
-        data.data.forEach(({img, altimg, title, descr, price}) => {
-                         new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+        .then(data => {
+            data.data.forEach(({
+                img,
+                altimg,
+                title,
+                descr,
+                price
+            }) => {
+                new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+            });
         });
-    });
 
     // Forms
 
@@ -302,5 +308,59 @@ window.addEventListener('DOMContentLoaded', () => {
             previousModalDialog.classList.remove('hide');
             closeModal();
         }, 4000);
+    }
+
+    // Slider
+
+    const slides = document.querySelectorAll('.offer__slide'),
+        counter = document.querySelector('.offer__slider-counter'),
+        currentSpan = counter.querySelector('#current'),
+        maxSpan = counter.querySelector('#total'),
+        prevBtn = counter.querySelector('.offer__slider-prev'),
+        nextBtn = counter.querySelector('.offer__slider-next');
+
+
+    let slideInd = 0;
+    const slidesCount = slides.length;
+    maxSpan.innerHTML = getZero(slidesCount);
+
+    function hideSlides() {
+        slides.forEach(item => {
+            item.classList.add('hide');
+            item.classList.remove('show', 'fade');
+        });
+    }
+
+    function showSlide(index = 0) {
+        slides[index].classList.add('show', 'fade');
+        slides[index].classList.remove('hide');
+
+        currentSpan.innerHTML = getZero(index + 1);
+    }
+
+    hideSlides();
+    showSlide();
+
+    prevBtn.addEventListener('click', showPrevSlide);
+    nextBtn.addEventListener('click', showNextSlide);
+
+    function showPrevSlide() {
+        slideInd--;
+        if (slideInd < 0) {
+            slideInd = slidesCount - 1;
+        }
+
+        hideSlides();
+        showSlide(slideInd);
+    }
+
+    function showNextSlide() {
+        slideInd++;
+        if (slideInd >= slidesCount) {
+            slideInd = 0;
+        }
+
+        hideSlides();
+        showSlide(slideInd);
     }
 });
