@@ -313,45 +313,100 @@ window.addEventListener('DOMContentLoaded', () => {
     // Slider
 
     const slides = document.querySelectorAll('.offer__slide'),
-        counter = document.querySelector('.offer__slider-counter'),
-        currentSpan = counter.querySelector('#current'),
-        maxSpan = counter.querySelector('#total'),
-        prevBtn = counter.querySelector('.offer__slider-prev'),
-        nextBtn = counter.querySelector('.offer__slider-next');
+        currentSpan = document.querySelector('#current'),
+        maxSpan = document.querySelector('#total'),
+        prevBtn = document.querySelector('.offer__slider-prev'),
+        nextBtn = document.querySelector('.offer__slider-next'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        slidesField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slidesWrapper).width,
+        slidesCount = slides.length;
 
+    let slideInd = 1;
+    let offset = 0;
 
-    let slideInd = 0;
-    const slidesCount = slides.length;
+    slidesField.style.width = 100 * slidesCount + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+
+    slidesWrapper.style.overflow = 'hidden';
+
+    slides.forEach(slide => {
+        slide.style.width = width;
+    });
+
+    currentSpan.innerHTML = getZero(slideInd);
     maxSpan.innerHTML = getZero(slidesCount);
 
-    function showSlide(index = 0) {
-        
-        if (index < 0) {
-            index = slidesCount - 1;
+    const slideWidthNum = +width.slice(0, width.length - 2); //+width.slice(0, width.length - 2) преобразует строку '500px' в число 500
+
+    nextBtn.addEventListener('click', () => {
+        if (offset == slideWidthNum * (slidesCount - 1)) { 
+            offset = 0;
+        } else {
+            offset += slideWidthNum;
         }
 
-        if (index >= slidesCount) {
-            index = 0;
+        slidesField.style.transform = `translateX(-${offset}px)`;
+        
+        if(slideInd == slidesCount){
+            slideInd = 1;
+        } else {
+            slideInd++;
         }
 
-        slides.forEach(item => item.style.display = 'none');
-        slides[index].style.display = 'block';
-
-        currentSpan.innerHTML = getZero(index + 1);
-        
-        slideInd = index;
-    }
-
-    function plusSlides(n){
-        showSlide(slideInd += n);
-    }
-
-    showSlide();
+        currentSpan.innerHTML = getZero(slideInd);
+    });
 
     prevBtn.addEventListener('click', () => {
-        plusSlides(-1);
+       if (offset == 0) { 
+            offset = slideWidthNum * (slides.length - 1); // записываем последний слайд
+        } else{
+            offset -= slideWidthNum;
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if(slideInd == 1){
+            slideInd = slidesCount;
+        } else {
+            slideInd--;
+        }
+
+        currentSpan.innerHTML = getZero(slideInd);
     });
-    nextBtn.addEventListener('click', () => {
-        plusSlides(1);
-    });
+
+    // const slidesCount = slides.length;
+    // maxSpan.innerHTML = getZero(slidesCount);
+
+    // function showSlide(index = 0) {
+
+    //     if (index < 0) {
+    //         index = slidesCount - 1;
+    //     }
+
+    //     if (index >= slidesCount) {
+    //         index = 0;
+    //     }
+
+    //     slides.forEach(item => item.style.display = 'none');
+    //     slides[index].style.display = 'block';
+
+    //     currentSpan.innerHTML = getZero(index + 1);
+
+    //     slideInd = index;
+    // }
+
+    // function plusSlides(n){
+    //     showSlide(slideInd += n);
+    // }
+
+    // showSlide();
+
+    // prevBtn.addEventListener('click', () => {
+    //     plusSlides(-1);
+    // });
+    // nextBtn.addEventListener('click', () => {
+    //     plusSlides(1);
+    // });
 });
