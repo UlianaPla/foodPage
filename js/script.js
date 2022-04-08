@@ -313,6 +313,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Slider
 
     const slides = document.querySelectorAll('.offer__slide'),
+        slider = document.querySelector('.offer__slider'),
         currentSpan = document.querySelector('#current'),
         maxSpan = document.querySelector('#total'),
         prevBtn = document.querySelector('.offer__slider-prev'),
@@ -335,78 +336,97 @@ window.addEventListener('DOMContentLoaded', () => {
         slide.style.width = width;
     });
 
+    slider.style.position = 'relative'; // теперь все элементы которые спозиционированны абсолютно внутри слайдера, будут нормально отображаться
+
+    const indicators = document.createElement('ol'), //ol - ordered List
+        dots = [];
+
+    indicators.classList.add('carousel-indicators');
+    indicators.style.cssText = `
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 15;
+        display: flex;
+        justify-content: center;
+        margin-right: 15%;
+        margin-left: 15%;
+        list-style: none;
+    `;
+    slider.append(indicators);
+
+    for (let i = 0; i < slidesCount; i++) {
+        const dot = document.createElement('li'); //li - list item
+        dot.setAttribute('data-slide-to', i + 1); // устанавливаем атрибут- соответствие точки к слайду
+        dot.style.cssText = `
+            box-sizing: content-box;
+            flex: 0 1 auto;
+            width: 30px;
+            height: 6px;
+            margin-right: 3px;
+            margin-left: 3px;
+            cursor: pointer;
+            background-color: #fff;
+            background-clip: padding-box;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            opacity: .5;
+            transition: opacity .6s ease;
+        `;
+        if (i == 0) {
+            dot.style.opacity = 1;
+        }
+        indicators.append(dot);
+        dots.push(dot);
+    }
+
     currentSpan.innerHTML = getZero(slideInd);
     maxSpan.innerHTML = getZero(slidesCount);
 
     const slideWidthNum = +width.slice(0, width.length - 2); //+width.slice(0, width.length - 2) преобразует строку '500px' в число 500
+    const getOffsetBySlide = (slideInd) => slideWidthNum * slideInd;
 
     nextBtn.addEventListener('click', () => {
-        if (offset == slideWidthNum * (slidesCount - 1)) { 
-            offset = 0;
-        } else {
-            offset += slideWidthNum;
-        }
-
-        slidesField.style.transform = `translateX(-${offset}px)`;
-        
-        if(slideInd == slidesCount){
+        if (slideInd == slidesCount) {
             slideInd = 1;
         } else {
             slideInd++;
         }
 
-        currentSpan.innerHTML = getZero(slideInd);
+        showSlide(slideInd);
     });
 
     prevBtn.addEventListener('click', () => {
-       if (offset == 0) { 
-            offset = slideWidthNum * (slides.length - 1); // записываем последний слайд
-        } else{
-            offset -= slideWidthNum;
-        }
-
-        slidesField.style.transform = `translateX(-${offset}px)`;
-
-        if(slideInd == 1){
+        if (slideInd == 1) {
             slideInd = slidesCount;
         } else {
             slideInd--;
         }
 
-        currentSpan.innerHTML = getZero(slideInd);
+        showSlide(slideInd);
     });
 
-    // const slidesCount = slides.length;
-    // maxSpan.innerHTML = getZero(slidesCount);
+    dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            const slideTo = e.target.getAttribute('data-slide-to');
 
-    // function showSlide(index = 0) {
+            slideInd = slideTo;
+            showSlide(slideInd);
+        });
+    });
 
-    //     if (index < 0) {
-    //         index = slidesCount - 1;
-    //     }
+    function showSlide(slideNum) {
 
-    //     if (index >= slidesCount) {
-    //         index = 0;
-    //     }
+        offset = getOffsetBySlide(slideNum - 1);
+        slidesField.style.transform = `translateX(-${offset}px)`;
 
-    //     slides.forEach(item => item.style.display = 'none');
-    //     slides[index].style.display = 'block';
+        currentSpan.innerHTML = getZero(slideNum);
+        highlightDot(slideNum - 1);
+    }
 
-    //     currentSpan.innerHTML = getZero(index + 1);
-
-    //     slideInd = index;
-    // }
-
-    // function plusSlides(n){
-    //     showSlide(slideInd += n);
-    // }
-
-    // showSlide();
-
-    // prevBtn.addEventListener('click', () => {
-    //     plusSlides(-1);
-    // });
-    // nextBtn.addEventListener('click', () => {
-    //     plusSlides(1);
-    // });
+    function highlightDot(dotIndex) {
+        dots.forEach(dot => dot.style.opacity = '.5');
+        dots[dotIndex].style.opacity = 1;
+    }
 });
