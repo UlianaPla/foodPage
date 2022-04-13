@@ -384,7 +384,8 @@ window.addEventListener('DOMContentLoaded', () => {
     currentSpan.innerHTML = getZero(slideInd);
     maxSpan.innerHTML = getZero(slidesCount);
 
-    const slideWidthNum = +width.slice(0, width.length - 2); //+width.slice(0, width.length - 2) преобразует строку '500px' в число 500
+    const slideWidthNum = +width.replace(/[a-zA-Z]/g, ''); // преобразует строку '500px' в число 500
+
     const getOffsetBySlide = (slideInd) => slideWidthNum * slideInd;
 
     nextBtn.addEventListener('click', () => {
